@@ -234,6 +234,8 @@ function updateReportCard(reportCardTableElement, currentSemester) {
 
   addTotalsRow(reportCardTableElement);
   addGpaRow(reportCardTableElement);
+  addUpStudentCredits(reportCardTableElement);
+  calculateSemesterGpa(reportCardTableElement);
 }
 
 /**
@@ -308,6 +310,18 @@ function addEventListeners(
    CALCULATIONS
 ****************/
 
+function getTotalCredits(reportCardTableElement) {
+  let creditElems = reportCardTableElement.querySelectorAll(".credit");
+  let creditSum = 0;
+  for (let credit of creditElems) {
+    if (credit.innerHTML != "") {
+      creditSum += parseInt(credit.innerHTML);
+    }
+  }
+
+  return creditSum;
+}
+
 /**
  * Use query selectors on the `reportCardTableElement` element
  * to access the credits the student has earned for each course.
@@ -318,12 +332,7 @@ function addEventListeners(
  *
  */
 function addUpStudentCredits(reportCardTableElement) {
-  let creditElems = reportCardTableElement.querySelectorAll(".credit");
-  let creditSum = 0;
-  for (let credit of creditElems) {
-    creditSum += parseInt(credit.innerHTML);
-  }
-
+  let creditSum = getTotalCredits(reportCardTableElement);
   reportCardTableElement.querySelector('#total-credits').innerHTML = creditSum + " credits";
 }
 
@@ -341,7 +350,16 @@ function addUpStudentCredits(reportCardTableElement) {
  */
 
 function calculateSemesterGpa(reportCardTableElement) {
-  // code goes here
+  let gpaPointsSum = 0;
+  let gpaElems = reportCardTableElement.querySelectorAll('.gpa');
+  for (let elem of gpaElems) {
+    if (elem.innerHTML != "") {
+      gpaPointsSum += gpaPointsLookup[elem.innerHTML];
+    }
+  }
+  let gpa = gpaPointsSum / getTotalCredits(reportCardTableElement);
+
+  reportCardTableElement.querySelector('#gpa').innerHTML = gpa;
 }
 
 window.onload = function () {
