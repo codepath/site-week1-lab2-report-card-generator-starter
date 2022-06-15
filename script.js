@@ -318,7 +318,13 @@ function addEventListeners(
  *
  */
 function addUpStudentCredits(reportCardTableElement) {
-  // code goes here
+  let creditElems = reportCardTableElement.querySelectorAll(".credit");
+  let creditSum = 0;
+  for (let credit of creditElems) {
+    creditSum += parseInt(credit.innerHTML);
+  }
+
+  reportCardTableElement.querySelector('#total-credits').innerHTML = creditSum + " credits";
 }
 
 /**
