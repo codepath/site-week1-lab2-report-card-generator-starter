@@ -179,7 +179,7 @@ function addCourseRowToReportCard(reportCardTableElement, course, rowNum) {
     <h4 class="sem-col">${course.semester}</h4>
     <h4 class="cred-col"><span class="credit">${course.credits}</span> credits</h4>
     <h4 class="lett-col gpa">${course.grade}</h4>
-    <h4 id="gpa-${rowNum + 1}" class="pts-col">?</h4>
+    <h4 id="gpa-${rowNum + 1}" class="pts-col">${gpaPointsLookup[course.grade]}</h4>
   </div>
   `;
 }
@@ -310,18 +310,6 @@ function addEventListeners(
    CALCULATIONS
 ****************/
 
-function getTotalCredits(reportCardTableElement) {
-  let creditElems = reportCardTableElement.querySelectorAll(".credit");
-  let creditSum = 0;
-  for (let credit of creditElems) {
-    if (credit.innerHTML != "") {
-      creditSum += parseInt(credit.innerHTML);
-    }
-  }
-
-  return creditSum;
-}
-
 /**
  * Use query selectors on the `reportCardTableElement` element
  * to access the credits the student has earned for each course.
@@ -332,7 +320,14 @@ function getTotalCredits(reportCardTableElement) {
  *
  */
 function addUpStudentCredits(reportCardTableElement) {
-  let creditSum = getTotalCredits(reportCardTableElement);
+  let creditElems = reportCardTableElement.querySelectorAll(".credit");
+  let creditSum = 0;
+  for (let credit of creditElems) {
+    if (credit.innerHTML != "") {
+      creditSum += parseInt(credit.innerHTML);
+    }
+  }
+
   reportCardTableElement.querySelector('#total-credits').innerHTML = creditSum + " credits";
 }
 
@@ -350,15 +345,16 @@ function addUpStudentCredits(reportCardTableElement) {
  */
 
 function calculateSemesterGpa(reportCardTableElement) {
-  let gpaPointsSum = 0;
+  let totalPoints = 0.0;
   let gpaElems = reportCardTableElement.querySelectorAll('.gpa');
   for (let elem of gpaElems) {
-    if (elem.innerHTML != "") {
-      gpaPointsSum += gpaPointsLookup[elem.innerHTML];
+    if (elem.innerHTML in gpaPointsLookup) {
+      totalPoints += gpaPointsLookup[elem.innerHTML];
     }
   }
-  let gpa = gpaPointsSum / getTotalCredits(reportCardTableElement);
+  let gpa = totalPoints / gpaElems.length;
 
+  reportCardTableElement.querySelector('#total-pts').innerHTML = totalPoints;
   reportCardTableElement.querySelector('#gpa').innerHTML = gpa;
 }
 
