@@ -347,12 +347,14 @@ function addUpStudentCredits(reportCardTableElement) {
 function calculateSemesterGpa(reportCardTableElement) {
   let totalPoints = 0.0;
   let gpaElems = reportCardTableElement.querySelectorAll('.gpa');
+  let classesCount = 0;
   for (let elem of gpaElems) {
     if (elem.innerHTML in gpaPointsLookup) {
+      classesCount += 1;
       totalPoints += gpaPointsLookup[elem.innerHTML];
     }
   }
-  let gpa = totalPoints / gpaElems.length;
+  let gpa = (totalPoints / classesCount).toFixed(2);
 
   reportCardTableElement.querySelector('#total-pts').innerHTML = totalPoints;
   reportCardTableElement.querySelector('#gpa').innerHTML = gpa;
