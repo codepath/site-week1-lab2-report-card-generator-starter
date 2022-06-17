@@ -136,12 +136,12 @@ function updateStudentImage(imageUrl) {
  * This function should run as soon as the page loads and update the correct student info
  */
 function populateStudentInfo(studentInformationObject) {
-  updateStudentName(studentInformationObject.name)
-  updateStudentGradeLevel(studentInformationObject.grade)
-  updateStudentAdvisor(studentInformationObject.advisor)
-  updateMajor(studentInformationObject.major)
-  updateStudentGraduationYear(studentInformationObject.graduationYear)
-  updateStudentImage(studentInformationObject.imageUrl)
+  updateStudentName(studentInformationObject.name);
+  updateStudentGradeLevel(studentInformationObject.grade);
+  updateStudentAdvisor(studentInformationObject.advisor);
+  updateMajor(studentInformationObject.major);
+  updateStudentGraduationYear(studentInformationObject.graduationYear);
+  updateStudentImage(studentInformationObject.imageUrl);
 }
 
 /**
@@ -226,7 +226,7 @@ function updateReportCard(reportCardTableElement, currentSemester) {
 
   addReportCardHeaders(reportCardTableElement);
 
-  let courses = studentData[currentSemester];
+  const courses = studentData[currentSemester];
 
   for (let i=0; i < courses.length; i++) {
     addCourseRowToReportCard(reportCardTableElement, courses[i], i);
@@ -320,13 +320,8 @@ function addEventListeners(
  *
  */
 function addUpStudentCredits(reportCardTableElement) {
-  let creditElems = reportCardTableElement.querySelectorAll(".credit");
-  let creditSum = 0;
-  for (let credit of creditElems) {
-    if (credit.innerHTML != "") {
-      creditSum += parseInt(credit.innerHTML);
-    }
-  }
+  let creditElems = Array.from(reportCardTableElement.querySelectorAll(".credit")).filter((credit) => credit.innerHTML != "");
+  const creditSum = creditElems.reduce((sum, elem) => sum + parseInt(elem.innerHTML), 0);
 
   reportCardTableElement.querySelector('#total-credits').innerHTML = creditSum + " credits";
 }
@@ -345,16 +340,10 @@ function addUpStudentCredits(reportCardTableElement) {
  */
 
 function calculateSemesterGpa(reportCardTableElement) {
-  let totalPoints = 0.0;
-  let gpaElems = reportCardTableElement.querySelectorAll('.gpa');
-  let classesCount = 0;
-  for (let elem of gpaElems) {
-    if (elem.innerHTML in gpaPointsLookup) {
-      classesCount += 1;
-      totalPoints += gpaPointsLookup[elem.innerHTML];
-    }
-  }
-  let gpa = (totalPoints / classesCount).toFixed(2);
+  let grades = Array.from(reportCardTableElement.querySelectorAll('.gpa')).filter((grade) => grade.innerHTML in gpaPointsLookup);
+  const totalPoints = grades.reduce((total, grade) => total + gpaPointsLookup[grade.innerHTML], 0.0);
+
+  let gpa = (totalPoints / grades.length).toFixed(2);
 
   reportCardTableElement.querySelector('#total-pts').innerHTML = totalPoints;
   reportCardTableElement.querySelector('#gpa').innerHTML = gpa;
